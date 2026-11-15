@@ -42,7 +42,12 @@ export default function OrderDetailPage() {
 
   return (
     <div className="max-w-3xl">
-      <h1 className="text-2xl font-bold text-navy">{order.orderNumber}</h1>
+      <div className="flex items-center gap-3">
+        <h1 className="text-2xl font-bold text-navy">{order.orderNumber}</h1>
+        <span className="inline-flex items-center rounded-md bg-blue-50 px-2.5 py-1 text-xs font-semibold text-[#0066cc] border border-blue-200">
+          Source: {order.store ? (order.store.charAt(0).toUpperCase() + order.store.slice(1)) : "Server Embassy"}
+        </span>
+      </div>
       <p className="text-sm text-muted">{order.email}</p>
       <div className="mt-6 rounded-2xl bg-white p-5 ring-1 ring-line">
         <label className="text-sm font-medium">

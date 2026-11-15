@@ -6,27 +6,86 @@ import { useToast, getErrorMessage } from "@/components/Toast";
 
 const statuses = ["new", "contacted", "quoted", "won", "lost"];
 
+const STORES = [
+  ["powerline", "Powerline Devices"],
+  ["serverembassy", "Server Embassy"],
+  ["", "All Enterprise Channels"],
+] as const;
+
+function StoreBadge({ store }: { store?: string }) {
+  const s = (store || "serverembassy").toLowerCase();
+  if (s.includes("serverembassy") || s === "se") {
+    return (
+      <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold text-[#0066cc] border border-blue-200">
+        Server Embassy
+      </span>
+    );
+  }
+  if (s.includes("powerline")) {
+    return (
+      <span className="inline-flex items-center rounded-md bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700 border border-amber-200">
+        Powerline
+      </span>
+    );
+  }
+  if (s.includes("lucky") || s.includes("scoop")) {
+    return (
+      <span className="inline-flex items-center rounded-md bg-pink-50 px-2 py-0.5 text-xs font-semibold text-pink-700 border border-pink-200">
+        Lucky Scoop
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700 border border-slate-200">
+      {store || "Default"}
+    </span>
+  );
+}
+
 export default function QuotesPage() {
   const { toast } = useToast();
   const [page, setPage] = useState(1);
-  const { data, isLoading } = useGetQuotesQuery({ page });
-  const quotes = data?.items ?? [];
+  const [store, setStore] = useState("");
+  const { data, isLoading } = useGetQuotesQuery({
+    page,
+    store: store || undefined,
+  });
+  const quotes = Array.isArray(data) ? data : (data?.items ?? []);
   const totalPages = data?.totalPages ?? 1;
   const [updateStatus] = useUpdateQuoteStatusMutation();
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-navy">Quotes / RFQ</h1>
-      <p className="text-sm text-muted">Inbound bulk-quote and Get Started form submissions.</p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-navy">Quotes / RFQ</h1>
+          <p className="text-sm text-muted">Inbound bulk-quote and enterprise RFQ form submissions.</p>
+        </div>
+        <select
+          value={store}
+          onChange={(e) => {
+            setStore(e.target.value);
+            setPage(1);
+          }}
+          className="rounded-lg border border-line bg-white px-3 py-2 text-sm font-medium text-navy shadow-xs"
+        >
+          {STORES.map(([val, label]) => (
+            <option key={val} value={val}>
+              {label}
+            </option>
+          ))}
+        </select>
+      </div>
 
       {isLoading ? (
-        <TableSkeleton cols={4} rows={5} className="mt-6" />
+        <TableSkeleton cols={7} rows={5} className="mt-6" />
       ) : (
         <div className="mt-6 overflow-hidden rounded-2xl bg-white ring-1 ring-line">
           <table className="w-full text-sm">
             <thead className="bg-page text-left text-muted">
               <tr>
-                <th className="px-4 py-3">Name</th>
+                <th className="px-4 py-3">Website</th>
+                <th className="px-4 py-3">Name / Contact</th>
                 <th className="px-4 py-3">Company</th>
                 <th className="px-4 py-3">Part #</th>
                 <th className="px-4 py-3">Qty</th>
@@ -37,26 +96,29 @@ export default function QuotesPage() {
             <tbody>
               {quotes.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-sm text-muted">
-                    No quote requests yet.
+                  <td colSpan={7} className="px-4 py-8 text-center text-sm text-muted">
+                    No quote requests match this filter.
                   </td>
                 </tr>
               ) : (
                 quotes.map((quote) => (
-                  <tr key={quote.id} className="border-t border-line">
+                  <tr key={quote.id} className="border-t border-line hover:bg-slate-50/50 transition">
                     <td className="px-4 py-3">
-                      <p className="font-medium">{quote.name}</p>
+                      <StoreBadge store={quote.store} />
+                    </td>
+                    <td className="px-4 py-3">
+                      <p className="font-semibold text-navy">{quote.name}</p>
                       <p className="text-xs text-muted">{quote.email}</p>
                     </td>
-                    <td className="px-4 py-3">{quote.company || "—"}</td>
-                    <td className="px-4 py-3 font-mono text-xs">{quote.partNumber || "—"}</td>
+                    <td className="px-4 py-3 text-slate-700">{quote.company || "—"}</td>
+                    <td className="px-4 py-3 font-mono text-xs font-semibold text-navy">{quote.partNumber || "—"}</td>
                     <td className="px-4 py-3">{quote.quantity ?? "—"}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 font-semibold text-navy">
                       {quote.targetPrice != null ? `$${quote.targetPrice}` : "—"}
                     </td>
                     <td className="px-4 py-3">
                       <select
-                        className="rounded-lg border border-line px-2 py-1"
+                        className="rounded-lg border border-line px-2 py-1 text-xs"
                         value={quote.status}
                         onChange={async (e) => {
                           try {

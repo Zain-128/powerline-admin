@@ -18,6 +18,7 @@ export default function ProductsPage() {
     page,
     limit: 20,
     q: submittedQ || undefined,
+    store: "powerline",
   });
   const { data: categoryRes } = useGetCategoriesQuery();
   const categories = categoryRes?.items ?? [];

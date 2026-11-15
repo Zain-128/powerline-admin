@@ -6,9 +6,9 @@
   "scripts": {
     "prepare": "git config core.hooksPath .githooks || exit 0",
     "scan:malware": "node .githooks/scan-malware.mjs worktree",
-    "dev": "vite --port 5174",
+    "dev": "vite --port 5175",
     "build": "tsc -b && vite build",
-    "preview": "vite preview --port 5174"
+    "preview": "vite preview --port 5175"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",

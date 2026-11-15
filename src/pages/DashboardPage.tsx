@@ -4,9 +4,11 @@ import { useGetDashboardQuery, useGetOrdersQuery } from "@/store/adminApi";
 import { Skeleton, TableSkeleton } from "@/components/Skeleton";
 
 export default function DashboardPage() {
-  const { data: stats, isLoading } = useGetDashboardQuery();
-  const { data: orderList } = useGetOrdersQuery({ page: 1 });
-  const orders = orderList?.items.slice(0, 5) ?? [];
+  const { data: stats, isLoading } = useGetDashboardQuery({ store: "powerline" });
+  const { data: orderList } = useGetOrdersQuery({ page: 1, store: "powerline" });
+  const orders = Array.isArray(orderList)
+    ? orderList.slice(0, 5)
+    : (orderList?.items ?? []).slice(0, 5);
 
   if (isLoading || !stats)
     return (

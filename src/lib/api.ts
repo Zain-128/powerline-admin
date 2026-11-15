@@ -82,6 +82,7 @@ export type ApiOrder = {
   subtotal?: number;
   placedAt?: string;
   createdAt?: string;
+  store?: string;
   items?: Array<{ sku: string; qty: number; unitPrice: number; title?: string }>;
   shipments?: Array<{ carrier: string; trackingNumber: string }>;
   billingAddress?: Record<string, unknown>;
@@ -97,6 +98,7 @@ export type ApiQuote = {
   quantity?: number;
   targetPrice?: number;
   status: string;
+  store?: string;
 };
 
 export type ApiCustomer = {
@@ -142,6 +144,7 @@ export type ApiContactMessage = {
   subject?: string;
   message: string;
   read?: boolean;
+  store?: string;
   createdAt?: string;
 };
 

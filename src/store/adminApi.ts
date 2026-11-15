@@ -31,6 +31,7 @@ const rawBaseQuery = fetchBaseQuery({
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as { auth: { token: string | null } }).auth.token;
     if (token) headers.set("Authorization", `Bearer ${token}`);
+    headers.set("x-store-origin", "powerline");
     return headers;
   },
 });
@@ -112,21 +113,22 @@ export const adminApi = createApi({
         processingOrders: number;
         revenue: number;
       },
-      void
+      { store?: string } | void
     >({
-      query: () => "/admin/dashboard",
+      query: (params) => (params?.store ? `/admin/dashboard?store=${params.store}` : "/admin/dashboard"),
       providesTags: ["Dashboard"],
     }),
 
     getProducts: builder.query<
       Paginated<ApiProduct>,
-      { page?: number; limit?: number; q?: string } | void
+      { page?: number; limit?: number; q?: string; store?: string } | void
     >({
       query: (params) =>
         `/admin/products${toQuery({
           page: params?.page,
           limit: params?.limit ?? 100,
           q: params?.q,
+          store: params?.store,
         })}`,
       providesTags: ["Products"],
     }),
@@ -228,12 +230,12 @@ export const adminApi = createApi({
 
     getOrders: builder.query<
       Paginated<ApiOrder>,
-      { page?: number; status?: string } | void
+      { page?: number; status?: string; store?: string } | void
     >({
       query: (params) =>
         `/admin/orders?page=${params?.page ?? 1}&limit=50${
           params?.status ? `&status=${params.status}` : ""
-        }`,
+        }${params?.store ? `&store=${encodeURIComponent(params.store)}` : ""}`,
       providesTags: ["Orders"],
     }),
     getOrder: builder.query<ApiOrder, string>({
@@ -262,9 +264,14 @@ export const adminApi = createApi({
 
     getQuotes: builder.query<
       Paginated<ApiQuote>,
-      { page?: number; limit?: number } | void
+      { page?: number; limit?: number; store?: string } | void
     >({
-      query: (params) => `/admin/quotes${toQuery({ page: params?.page, limit: params?.limit })}`,
+      query: (params) =>
+        `/admin/quotes${toQuery({
+          page: params?.page,
+          limit: params?.limit,
+          store: params?.store,
+        })}`,
       providesTags: ["Quotes"],
     }),
     updateQuoteStatus: builder.mutation<ApiQuote, { id: string; status: string }>({
