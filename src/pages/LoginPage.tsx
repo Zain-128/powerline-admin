@@ -8,7 +8,7 @@ export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [email, setEmail] = useState("admin@serverembassy.com");
+  const [email, setEmail] = useState("admin@powerlinedevices.com");
   const [password, setPassword] = useState("admin123");
   const [loading, setLoading] = useState(false);
 

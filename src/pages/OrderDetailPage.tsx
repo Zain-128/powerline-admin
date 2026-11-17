@@ -45,7 +45,7 @@ export default function OrderDetailPage() {
       <div className="flex items-center gap-3">
         <h1 className="text-2xl font-bold text-navy">{order.orderNumber}</h1>
         <span className="inline-flex items-center rounded-md bg-blue-50 px-2.5 py-1 text-xs font-semibold text-[#0066cc] border border-blue-200">
-          Source: {order.store ? (order.store.charAt(0).toUpperCase() + order.store.slice(1)) : "Server Embassy"}
+          Source: {order.store ? (order.store === "powerline" ? "Power Line Devices" : order.store.charAt(0).toUpperCase() + order.store.slice(1)) : "Power Line Devices"}
         </span>
       </div>
       <p className="text-sm text-muted">{order.email}</p>

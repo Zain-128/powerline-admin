@@ -22,18 +22,18 @@ const STORES = [
 ] as const;
 
 function StoreBadge({ store }: { store?: string }) {
-  const s = (store || "serverembassy").toLowerCase();
-  if (s.includes("serverembassy") || s === "se") {
+  const s = (store || "powerline").toLowerCase();
+  if (s.includes("powerline") || s === "pl") {
     return (
       <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold text-[#0066cc] border border-blue-200">
-        Server Embassy
+        Power Line Devices
       </span>
     );
   }
-  if (s.includes("powerline")) {
+  if (s.includes("serverembassy") || s === "se") {
     return (
-      <span className="inline-flex items-center rounded-md bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700 border border-amber-200">
-        Powerline
+      <span className="inline-flex items-center rounded-md bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-700 border border-slate-200">
+        Server Embassy
       </span>
     );
   }
@@ -44,11 +44,7 @@ function StoreBadge({ store }: { store?: string }) {
       </span>
     );
   }
-  return (
-    <span className="inline-flex items-center rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700 border border-slate-200">
-      {store || "Default"}
-    </span>
-  );
+  return <span className="text-xs text-muted font-medium">{store || "Default"}</span>;
 }
 
 export default function OrdersPage() {
